@@ -178,8 +178,8 @@ const AnimalTodoList = ({ animal, socket }) => {
       const defaultTasks = [
         { text: 'Breakfast', isDefault: true },
         { text: 'Lunch', isDefault: true },
-        { text: 'Dinner', isDefault: true },
-        { text: 'Daily Walk', isDefault: true }
+        { text: 'Walk', isDefault: true },
+        { text: 'Dinner', isDefault: true }
       ];
       
       // Create each default task

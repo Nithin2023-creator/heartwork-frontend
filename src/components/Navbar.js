@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -7,6 +7,29 @@ const Navbar = () => {
   const location = useLocation();
   const { handleLogout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstall, setShowInstall] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstall(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setShowInstall(false);
+      }
+      setDeferredPrompt(null);
+    }
+  };
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', emoji: '🏠' },
@@ -80,8 +103,19 @@ const Navbar = () => {
             </div>
           </div>
           
-          {/* Right side with logout */}
-          <div className="flex items-center">
+          {/* Right side with logout and install */}
+          <div className="flex items-center gap-2">
+            {showInstall && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleInstallClick}
+                className="flex items-center gap-1 px-4 py-2 text-sm rounded-full bg-green-600 text-white hover:bg-green-700 transition-colors"
+              >
+                <span>Install App</span>
+                <span className="text-xs">⬇️</span>
+              </motion.button>
+            )}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

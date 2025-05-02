@@ -84,84 +84,171 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-light to-secondary-light p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md"
-      >
-        <div className="text-center mb-8">
-          <motion.h1
-            initial={{ y: -20 }}
-            animate={{ y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-3xl font-dancing text-primary mb-2"
-          >
-            Welcome Back
-          </motion.h1>
-          <p className="text-gray-600">Enter your password to continue</p>
+    <div className="min-h-screen p-6 sm:p-8 relative overflow-hidden">
+      {/* Glossy background effect similar to Dashboard */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="absolute inset-0 opacity-5">
+          {[...Array(15)].map((_, i) => (
+            <div 
+              key={i}
+              className="absolute text-8xl transform rotate-12"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                opacity: 0.07,
+                transform: `rotate(${Math.random() * 40 - 20}deg)`,
+              }}
+            >
+              {i % 2 === 0 ? '🐼' : '🐻'}
+            </div>
+          ))}
         </div>
+        {/* Glossy overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white opacity-30"></div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-              placeholder="Enter your password"
-              required
+      <div className="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen">
+        {/* Logo Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="mb-8 text-center"
+        >
+          <div className="flex justify-center items-center space-x-4 mb-6">
+            <motion.div
+              initial={{ scale: 0.8, rotate: -10 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-4xl sm:text-5xl"
+            >
+              🐼
+            </motion.div>
+            
+            <motion.div
+              initial={{ scaleY: 0 }}
+              animate={{ scaleY: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="h-10 w-1 bg-black rounded-full"
             />
-          </div>
-
-          {error && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-red-500 text-sm text-center"
+            
+            <motion.div
+              initial={{ scale: 0.8, rotate: 10 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="text-4xl sm:text-5xl"
             >
-              {error}
-            </motion.p>
-          )}
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Verifying...' : 'Enter'}
-          </motion.button>
+              🐻
+            </motion.div>
+          </div>
           
-          <div className="flex justify-center mt-4">
-            <button
-              type="button"
-              onClick={testConnection}
-              disabled={loading}
-              className="text-sm text-primary hover:underline focus:outline-none"
-            >
-              Test Connection
-            </button>
-          </div>
-        </form>
+          <h1 className="font-sans text-4xl sm:text-5xl font-black tracking-tight text-black mb-3 uppercase">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-neutral-600">
+              OUR WORLD
+            </span>
+          </h1>
+        </motion.div>
 
+        {/* Login Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="bg-white rounded-2xl shadow-xl overflow-hidden w-full max-w-md relative"
+        >
+          {/* Glossy card effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white to-transparent opacity-40 pointer-events-none"></div>
+          
+          {/* Header with gradient */}
+          <div className="h-20 bg-gradient-to-r w-full relative overflow-hidden flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-300 to-purple-500 opacity-90"></div>
+            <motion.div 
+              whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 0.5 }}
+              className="text-4xl z-10 drop-shadow-md"
+            >
+              🔒
+            </motion.div>
+          </div>
+          
+          <div className="p-8">
+            <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Welcome Back</h2>
+            
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    placeholder="Enter your password"
+                    required
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-red-50 border-l-4 border-red-500 p-4 rounded"
+                >
+                  <p className="text-red-700 text-sm">{error}</p>
+                </motion.div>
+              )}
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Verifying...</span>
+                  </div>
+                ) : 'Enter Our World'}
+              </motion.button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={testConnection}
+                disabled={loading}
+                className="text-sm text-blue-600 hover:text-blue-800 hover:underline focus:outline-none transition-colors"
+              >
+                Test Connection
+              </button>
+            </div>
+          </div>
+          
+          {/* Glossy highlight */}
+          <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-white to-transparent opacity-30 pointer-events-none"></div>
+        </motion.div>
+        
+        {/* Footer */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.8, duration: 0.8 }}
           className="mt-8 text-center"
         >
-          <p className="text-sm text-gray-500">
+          <p className="text-gray-500 text-sm">
             This is a private space. Unauthorized access is prohibited.
           </p>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 };

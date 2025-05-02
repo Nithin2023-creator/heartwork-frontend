@@ -41,7 +41,10 @@ const theme = createTheme({
 });
 
 // API configuration - set URL explicitly
-axios.defaults.baseURL = 'http://localhost:5000';
+// Use the deployment URL in production, otherwise use localhost
+axios.defaults.baseURL = process.env.NODE_ENV === 'production' 
+  ? 'https://heartwork-backend.vercel.app' // Replace with your actual deployed backend URL
+  : 'http://localhost:5001';
 console.log('Setting API base URL to:', axios.defaults.baseURL);
 // Important: Set withCredentials to false as we're using token-based auth
 axios.defaults.withCredentials = false;
@@ -92,27 +95,41 @@ function App() {
   // Install PWA logic
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstall, setShowInstall] = useState(false);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
 
   useEffect(() => {
     const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
       setShowInstall(true);
+      // Show banner and modal on mobile
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        setShowInstallBanner(true);
+        // Show a modal notification after a short delay
+        setTimeout(() => {
+          setShowInstallModal(true);
+        }, 3000); // 3 seconds delay
+      }
     };
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
-  const handleInstallClick = async () => {
+  const handleModalInstall = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
         setShowInstall(false);
+        setShowInstallBanner(false);
+        setShowInstallModal(false);
       }
       setDeferredPrompt(null);
     }
   };
+
+  const handleCloseModal = () => setShowInstallModal(false);
 
   // Verify token on component mount
   useEffect(() => {
@@ -196,6 +213,26 @@ function App() {
       <AuthProvider value={{ isAuthenticated, handleLogin, handleLogout }}>
         <Router>
           <div className="min-h-screen bg-gradient-to-br from-primary-light to-secondary-light flex flex-col">
+            {showInstallBanner && (
+              <div className="fixed top-0 left-0 w-full z-50 flex justify-center">
+                <div className="flex items-center bg-green-600 text-white px-4 py-3 rounded-b-lg shadow-lg mt-0 w-full max-w-md mx-auto">
+                  <span className="flex-1 font-semibold">Install Heartwork App for a better experience!</span>
+                  <button
+                    onClick={handleModalInstall}
+                    className="ml-4 px-3 py-1 rounded bg-white text-green-700 font-bold hover:bg-green-100 transition-colors"
+                  >
+                    Install
+                  </button>
+                  <button
+                    onClick={handleCloseModal}
+                    className="ml-2 text-white hover:text-gray-200 text-xl font-bold"
+                    aria-label="Close install banner"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+            )}
             {isAuthenticated && <Navbar />}
             <div className="flex-grow">
               <Routes>
@@ -266,12 +303,59 @@ function App() {
             {showInstall && (
               <div className="fixed bottom-4 left-0 w-full flex justify-center z-50">
                 <button
-                  onClick={handleInstallClick}
+                  onClick={handleModalInstall}
                   className="flex items-center gap-2 px-6 py-3 rounded-full bg-green-600 text-white shadow-lg hover:bg-green-700 transition-colors text-lg font-semibold"
                 >
                   <span>Install App</span>
                   <span className="text-xl">⬇️</span>
                 </button>
+              </div>
+            )}
+            
+            {showInstallModal && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div className="bg-white rounded-xl p-6 m-4 max-w-sm w-full shadow-2xl">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-900">Install Heartwork App</h3>
+                    <button 
+                      onClick={handleCloseModal}
+                      className="text-gray-400 hover:text-gray-500"
+                    >
+                      <span className="text-2xl">×</span>
+                    </button>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <p className="text-gray-700 mb-4">Install our app on your home screen for a better experience!</p>
+                    <div className="flex items-center mb-4 text-gray-700">
+                      <span className="mr-2 text-xl">⚡</span>
+                      <span>Faster loading</span>
+                    </div>
+                    <div className="flex items-center mb-4 text-gray-700">
+                      <span className="mr-2 text-xl">📲</span>
+                      <span>Home screen access</span>
+                    </div>
+                    <div className="flex items-center text-gray-700">
+                      <span className="mr-2 text-xl">🔌</span>
+                      <span>Works offline</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <button
+                      onClick={handleCloseModal}
+                      className="mr-2 px-4 py-2 text-gray-500 hover:text-gray-700 font-medium"
+                    >
+                      Not now
+                    </button>
+                    <button
+                      onClick={handleModalInstall}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
+                    >
+                      Install Now
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>

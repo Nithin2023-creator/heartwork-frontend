@@ -41,10 +41,7 @@ const theme = createTheme({
 });
 
 // API configuration - set URL explicitly
-// Use the deployment URL in production, otherwise use localhost
-axios.defaults.baseURL = process.env.NODE_ENV === 'production' 
-  ? 'https://heartwork-backend.vercel.app' // Replace with your actual deployed backend URL
-  : 'http://localhost:5001';
+axios.defaults.baseURL = 'http://localhost:5000';
 console.log('Setting API base URL to:', axios.defaults.baseURL);
 // Important: Set withCredentials to false as we're using token-based auth
 axios.defaults.withCredentials = false;

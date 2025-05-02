@@ -89,6 +89,31 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Install PWA logic
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstall, setShowInstall] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstall(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setShowInstall(false);
+      }
+      setDeferredPrompt(null);
+    }
+  };
+
   // Verify token on component mount
   useEffect(() => {
     const verifyToken = async () => {
@@ -170,72 +195,85 @@ function App() {
     <ThemeProvider theme={theme}>
       <AuthProvider value={{ isAuthenticated, handleLogin, handleLogout }}>
         <Router>
-          <div className="min-h-screen bg-gradient-to-br from-primary-light to-secondary-light">
+          <div className="min-h-screen bg-gradient-to-br from-primary-light to-secondary-light flex flex-col">
             {isAuthenticated && <Navbar />}
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  isAuthenticated ? (
-                    <Navigate to="/dashboard" />
-                  ) : showLogin ? (
-                    <Navigate to="/login" />
-                  ) : (
-                    <DecoyHomeWithNavigate />
-                  )
-                }
-              />
-              <Route
-                path="/login"
-                element={
-                  showLogin ? (
-                    <Login onLogin={handleLogin} />
-                  ) : (
-                    <Navigate to="/" />
-                  )
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  isAuthenticated ? (
-                    <Dashboard />
-                  ) : (
-                    <Navigate to="/" />
-                  )
-                }
-              />
-              <Route
-                path="/notes"
-                element={
-                  isAuthenticated ? (
-                    <StickyNotes />
-                  ) : (
-                    <Navigate to="/" />
-                  )
-                }
-              />
-              <Route
-                path="/gallery"
-                element={
-                  isAuthenticated ? (
-                    <Gallery />
-                  ) : (
-                    <Navigate to="/" />
-                  )
-                }
-              />
-              <Route
-                path="/todos"
-                element={
-                  isAuthenticated ? (
-                    <TodoList />
-                  ) : (
-                    <Navigate to="/" />
-                  )
-                }
-              />
-            </Routes>
+            <div className="flex-grow">
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    isAuthenticated ? (
+                      <Navigate to="/dashboard" />
+                    ) : showLogin ? (
+                      <Navigate to="/login" />
+                    ) : (
+                      <DecoyHomeWithNavigate />
+                    )
+                  }
+                />
+                <Route
+                  path="/login"
+                  element={
+                    showLogin ? (
+                      <Login onLogin={handleLogin} />
+                    ) : (
+                      <Navigate to="/" />
+                    )
+                  }
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    isAuthenticated ? (
+                      <Dashboard />
+                    ) : (
+                      <Navigate to="/" />
+                    )
+                  }
+                />
+                <Route
+                  path="/notes"
+                  element={
+                    isAuthenticated ? (
+                      <StickyNotes />
+                    ) : (
+                      <Navigate to="/" />
+                    )
+                  }
+                />
+                <Route
+                  path="/gallery"
+                  element={
+                    isAuthenticated ? (
+                      <Gallery />
+                    ) : (
+                      <Navigate to="/" />
+                    )
+                  }
+                />
+                <Route
+                  path="/todos"
+                  element={
+                    isAuthenticated ? (
+                      <TodoList />
+                    ) : (
+                      <Navigate to="/" />
+                    )
+                  }
+                />
+              </Routes>
+            </div>
+            {showInstall && (
+              <div className="fixed bottom-4 left-0 w-full flex justify-center z-50">
+                <button
+                  onClick={handleInstallClick}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-green-600 text-white shadow-lg hover:bg-green-700 transition-colors text-lg font-semibold"
+                >
+                  <span>Install App</span>
+                  <span className="text-xl">⬇️</span>
+                </button>
+              </div>
+            )}
           </div>
         </Router>
       </AuthProvider>

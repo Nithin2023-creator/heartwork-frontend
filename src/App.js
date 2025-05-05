@@ -42,7 +42,7 @@ const theme = createTheme({
 });
 
 // API configuration - set URL explicitly
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = 'https://ourwworld-backend.onrender.com';
 console.log('Setting API base URL to:', axios.defaults.baseURL);
 // Important: Set withCredentials to false as we're using token-based auth
 axios.defaults.withCredentials = false;

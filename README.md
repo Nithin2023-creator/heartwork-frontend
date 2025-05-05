@@ -1,74 +1,84 @@
-<<<<<<< HEAD
-# Getting Started with Create React App
+# Heartwork Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based frontend for the Heartwork application, designed to allow users to share sticky notes, gallery images and more with loved ones.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Sticky Notes**: Share text notes with real-time notifications
+- **Gallery**: Upload and share images
+- **To-Do Lists**: Create and manage shared to-do lists
+- **Real-time Notifications**: Get notified when new content is added
+- **Mobile Push Notifications**: Receive notifications on mobile devices even when the browser is closed
 
-### `npm start`
+## Mobile Push Notifications
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The application now supports mobile push notifications, allowing users to receive alerts on their mobile devices even when the browser is closed or the app is in the background.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Setup Instructions
 
-### `npm test`
+1. **Environment Setup**:
+   Copy the `.env.example` file to `.env` and add your VAPID public key:
+   ```
+   REACT_APP_VAPID_PUBLIC_KEY=your_vapid_public_key
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. **Installation as PWA**:
+   For the best experience on mobile devices, install the app as a Progressive Web App:
+   - On Android: Use the "Add to Home Screen" option in Chrome
+   - On iOS: Use Safari's share button and select "Add to Home Screen"
 
-### `npm run build`
+3. **Notification Controls**:
+   - Toggle browser notifications using the "Browser" button in the navbar
+   - Toggle mobile push notifications using the "Mobile" button in the navbar
+   - Note: Push notifications require a secure context (HTTPS) when deployed
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Troubleshooting
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+If you're experiencing issues with notifications:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Check if your browser supports the Web Push API and Service Workers
+2. Ensure you've granted notification permissions
+3. Verify that you're using HTTPS or localhost (required for notifications)
+4. Check your browser's notification settings
+5. On Windows, check Focus Assist settings and Windows notification settings
 
-### `npm run eject`
+For detailed testing and diagnostics, use the Notification Testing panel in the Dashboard.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Development
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Installation
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Running the development server
 
-## Learn More
+```bash
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Building for production
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm run build
+```
 
-### Code Splitting
+## Environment Variables
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Create a `.env` file in the project root with the following variables:
 
-### Analyzing the Bundle Size
+```
+REACT_APP_API_URL=http://localhost:5000
+REACT_APP_VAPID_PUBLIC_KEY=your_vapid_public_key
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Technologies Used
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-=======
-# personal-website
->>>>>>> 1ba6d5125b96508cf09302f26b112224b5067524
+- React
+- React Router
+- Framer Motion
+- Socket.io
+- Web Push API
+- Service Workers
+- Tailwind CSS

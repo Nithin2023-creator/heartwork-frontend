@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { useSocket } from '../context/SocketContext';
-import { requestNotificationPermission, showNotification } from '../utils/notificationUtil';
 
 const Navbar = () => {
   const location = useLocation();
   const { handleLogout } = useAuth();
-  const { notificationsEnabled, setNotificationsEnabled } = useSocket();
+  
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstall, setShowInstall] = useState(false);
@@ -34,72 +32,17 @@ const Navbar = () => {
     }
   };
 
-  const toggleNotifications = async () => {
-    console.log('Toggle notifications button clicked');
-    console.log('Current notification state:', notificationsEnabled);
-    
-    if (!('Notification' in window)) {
-      alert('Your browser does not support notifications');
-      return;
-    }
-    
-    if (!notificationsEnabled) {
-      console.log('Attempting to enable notifications...');
-      console.log('Current permission:', Notification.permission);
-      
-      if (Notification.permission === 'denied') {
-        alert('Notifications are blocked by your browser. Please enable them in your browser settings.');
-        // Show help based on browser
-        const isChrome = navigator.userAgent.indexOf("Chrome") > -1;
-        const isFirefox = navigator.userAgent.indexOf("Firefox") > -1;
-        
-        if (isChrome) {
-          alert('In Chrome: Click the lock icon in the address bar → Site settings → Notifications → Allow');
-        } else if (isFirefox) {
-          alert('In Firefox: Click the shield icon in the address bar → Manage permissions → Notifications → Allow');
-        } else {
-          alert('Please check your browser settings to enable notifications');
-        }
-        return;
-      }
-      
-      const permission = await requestNotificationPermission();
-      console.log('Permission request result:', permission);
-      
-      if (permission) {
-        setNotificationsEnabled(true);
-        // Show a test notification to confirm it works
-        showNotification('Notifications Enabled', {
-          body: 'You will now receive notifications when new notes or photos are added.',
-          icon: '/logo192.png'
-        });
-      } else {
-        alert('Could not enable notifications. Please check your browser settings.');
-      }
-    } else {
-      console.log('Disabling notifications (locally only)');
-      setNotificationsEnabled(false);
-      alert('Notifications disabled. You won\'t receive alerts for new notes or photos.');
-    }
-  };
-
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', emoji: '🏠' },
     { path: '/notes', label: 'Sticky Notes', emoji: '📝' },
     { path: '/gallery', label: 'Gallery', emoji: '🖼️' },
     { path: '/todos', label: 'To-Do Lists', emoji: '📋' },
   ];
-
+  
   // Animation variants
   const hoverAnimation = {
     scale: 1.05,
     transition: { duration: 0.2 }
-  };
-
-  // Determine active path and get corresponding emoji
-  const getActiveEmoji = () => {
-    const activeItem = navItems.find(item => location.pathname === item.path);
-    return activeItem?.emoji || '🏠';
   };
 
   return (
@@ -157,22 +100,6 @@ const Navbar = () => {
           
           {/* Right side with logout and install */}
           <div className="flex items-center gap-2">
-            {/* Notification toggle button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={toggleNotifications}
-              className={`hidden sm:flex items-center gap-1 px-3 py-2 text-sm rounded-full ${
-                notificationsEnabled 
-                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              } transition-colors`}
-              aria-label={notificationsEnabled ? 'Disable notifications' : 'Enable notifications'}
-            >
-              <span>{notificationsEnabled ? '🔔' : '🔕'}</span>
-              <span className="ml-1">{notificationsEnabled ? 'Notifications On' : 'Notifications Off'}</span>
-            </motion.button>
-            
             {showInstall && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -256,20 +183,6 @@ const Navbar = () => {
               </motion.div>
             </Link>
           ))}
-          
-          {/* Mobile notification toggle */}
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={toggleNotifications}
-            className={`flex w-full items-center px-3 py-3 rounded-md text-base font-medium ${
-              notificationsEnabled 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-200 text-gray-700'
-            }`}
-          >
-            <span className="mr-2">{notificationsEnabled ? '🔔' : '🔕'}</span>
-            {notificationsEnabled ? 'Disable Notifications' : 'Enable Notifications'}
-          </motion.button>
           
           <motion.button
             whileTap={{ scale: 0.95 }}

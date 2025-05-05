@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import axios from 'axios';
-import { requestNotificationPermission, showNotification } from '../utils/notificationUtil';
 
 // Create context
 const SocketContext = createContext(null);
@@ -10,17 +9,6 @@ export const useSocket = () => useContext(SocketContext);
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-
-  // Request notification permission when context is loaded
-  useEffect(() => {
-    const requestPermission = async () => {
-      const isGranted = await requestNotificationPermission();
-      setNotificationsEnabled(isGranted);
-    };
-    
-    requestPermission();
-  }, []);
 
   // Initialize socket connection
   useEffect(() => {
@@ -52,33 +40,11 @@ export const SocketProvider = ({ children }) => {
     // Listen for new sticky notes
     newSocket.on('newNote', (note) => {
       console.log('New note received:', note);
-      
-      if (notificationsEnabled) {
-        showNotification('New Sticky Note Added', {
-          body: note.text.substring(0, 50) + (note.text.length > 50 ? '...' : ''),
-          icon: '/logo192.png',
-          tag: 'new-note',
-          onClick: () => {
-            window.location.href = '/notes';
-          }
-        });
-      }
     });
     
     // Listen for new gallery images
     newSocket.on('newGalleryImage', (image) => {
       console.log('New gallery image received:', image);
-      
-      if (notificationsEnabled) {
-        showNotification('New Photo Added', {
-          body: image.description || 'A new photo was added to the gallery',
-          icon: image.imageUrl || '/logo192.png',
-          tag: 'new-gallery-image',
-          onClick: () => {
-            window.location.href = '/gallery';
-          }
-        });
-      }
     });
     
     setSocket(newSocket);
@@ -88,10 +54,12 @@ export const SocketProvider = ({ children }) => {
       console.log('Disconnecting socket');
       newSocket.disconnect();
     };
-  }, [notificationsEnabled]);
+  }, []);
   
   return (
-    <SocketContext.Provider value={{ socket, notificationsEnabled, setNotificationsEnabled }}>
+    <SocketContext.Provider value={{ 
+      socket
+    }}>
       {children}
     </SocketContext.Provider>
   );

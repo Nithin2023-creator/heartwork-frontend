@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import io from 'socket.io-client';
+import { useSocket } from '../context/SocketContext';
 
 // Task component with animations
 const Task = ({ task, onComplete, onDelete, animal }) => {
@@ -499,41 +500,8 @@ const AnimalTodoList = ({ animal, socket }) => {
 
 // Main TodoList component
 const TodoList = () => {
-  const [socket, setSocket] = useState(null);
-
-  // Initialize socket connection
-  useEffect(() => {
-    console.log('Connecting to socket at:', axios.defaults.baseURL);
-    
-    // Create socket with the correct backend URL and reconnection options
-    const newSocket = io(axios.defaults.baseURL, {
-      auth: {
-        token: localStorage.getItem('token')
-      },
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      timeout: 10000,
-      transports: ['websocket', 'polling']
-    });
-    
-    // Log socket connection events
-    newSocket.on('connect', () => {
-      console.log('Socket connected successfully');
-    });
-    
-    newSocket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
-    });
-    
-    setSocket(newSocket);
-    
-    // Clean up socket connection
-    return () => {
-      console.log('Disconnecting socket');
-      newSocket.disconnect();
-    };
-  }, []);
+  // Use the socket from SocketContext
+  const { socket } = useSocket();
 
   return (
     <div className="container mx-auto p-6">

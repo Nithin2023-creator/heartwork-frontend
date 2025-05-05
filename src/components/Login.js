@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { handleLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ const Login = ({ onLogin }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        withCredentials: false // Important: Set to false to match our global config
+        withCredentials: false // Important: Set to false to match global config
       };
       
       console.log('Sending login request with password:', password ? '******' : 'empty');
@@ -32,12 +34,8 @@ const Login = ({ onLogin }) => {
       
       if (response.data && response.data.token) {
         console.log('Login successful, setting token and redirecting');
-        // Store the token in localStorage
-        localStorage.setItem('token', response.data.token);
-        // Set token in axios headers for future requests
-        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-        // Call the onLogin callback
-        onLogin(response.data.token);
+        // Call the handleLogin function from context
+        handleLogin(response.data.token);
         // Navigate to dashboard
         navigate('/dashboard');
       } else {
@@ -54,7 +52,7 @@ const Login = ({ onLogin }) => {
         setError(`Login failed: ${err.response.data.message || 'Unknown error'}`);
       } else if (err.request) {
         console.error('No response received:', err.request);
-        setError('No response from the server. Please check your connection.');
+        setError('No response from server. Please check your connection.');
       } else {
         console.error('Error details:', err.message);
         setError(`Error: ${err.message}`);
@@ -104,7 +102,7 @@ const Login = ({ onLogin }) => {
           ))}
         </div>
         {/* Glossy overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white opacity-30"></div>
+        <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-white to-transparent opacity-30 pointer-events-none"></div>
       </div>
 
       <div className="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-screen">
@@ -185,7 +183,7 @@ const Login = ({ onLogin }) => {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     placeholder="Enter your password"
                     required
                   />
@@ -207,7 +205,7 @@ const Login = ({ onLogin }) => {
                 whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
